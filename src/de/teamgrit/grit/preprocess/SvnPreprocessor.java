@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import de.teamgrit.grit.preprocess.fetch.SubmissionFetchingException;
@@ -34,6 +35,7 @@ import de.teamgrit.grit.preprocess.tokenize.GeneralTokenizer;
 import de.teamgrit.grit.preprocess.tokenize.MaximumDirectoryDepthExceededException;
 import de.teamgrit.grit.preprocess.tokenize.Submission;
 import de.teamgrit.grit.preprocess.tokenize.Tokenizer;
+import de.teamgrit.grit.preprocess.tokenize.SubmissionStructure;
 import de.teamgrit.grit.util.hashing.SHA1Generator;
 
 /**
@@ -72,8 +74,8 @@ public final class SvnPreprocessor {
     public static PreprocessingResult preprocess(Connection connection,
             Path targetDirectory, String fileRegex, String archiveRegex)
             throws SubmissionFetchingException {
-
-        Tokenizer submissionTokenizer =
+    	    	    	    	
+       Tokenizer submissionTokenizer =
                 new GeneralTokenizer(fileRegex, archiveRegex);
         List<Student> studentsWithoutSubmission = new ArrayList<>();
         Map<Student, Submission> submissions = new HashMap<>();
@@ -82,7 +84,22 @@ public final class SvnPreprocessor {
         // throws SubmissionFetchingException
         Path pathToSubmissions =
                 SvnFetcher.fetchSubmissions(connection, targetDirectory);
-
+       
+        /*
+         * Traverse überspringt den ersten Ordner da es zweimal aufgerufen wird bevor die Ordner verglichen werden,
+         * dadurch findet er den ersten Ordner "varcid" in unserem fall. Daher liefert pathToSubmission einen korrekten
+         * Pfad.
+         * Jedoch ist dieser Pfad falsch wenn students.txt gesucht wird, da der root Ordner(varicd in unserem Fall) fehlt.
+         * daher als kleiner Bugfix wird q initialisiert damit students.txt gefunden werden kann. Dies geht aber nur für 
+         * folgendes subversion directory: https://svn.uni-konstanz.de/dbis/swp_15s/group/varcid/
+         * 
+         * FIXME q muss allgeim gültig initialisert werden für alle Subversion directorys, eventuell kommt man über die 
+         * Submissionstructure an den Rootordner ähnlich zu traverse()
+         */
+        String q = pathToSubmissions.toString()+"/varcid";
+        
+        LOGGER.info("pathToSubmissions" + q);
+        
         if (pathToSubmissions != null) {
             // since we're using SVN we don't receive a list of mail
             // adresses, so we have to parse the corresponding file
@@ -98,9 +115,15 @@ public final class SvnPreprocessor {
                         submissionTokenizer.exploreSubmissionDirectory(
                                 connection.getStructure(), pathToSubmissions);
                 File studentsMapping =
-                        new File(pathToSubmissions.toString(), "students.txt");
-
+                        new File(q, "students.txt");
+                  
+                //Test ob File die richten addressen gespeichert hat
+                LOGGER.info(tokenizedSubmissions.get(0).getStudent().getName());
+                LOGGER.info(tokenizedSubmissions.get(0).getStudent().getEmail());
+                
                 // throws FileNotFoundException
+                
+                
                 Scanner fileReader = new Scanner(studentsMapping);
 
                 List<String> tempStudents = new ArrayList<>();
@@ -117,7 +140,10 @@ public final class SvnPreprocessor {
                 }
 
                 fileReader.close();
-
+                //Test ob student übergeben wurde
+                for(int i = 0; i < tempStudents.size(); i++)
+                	LOGGER.info("Student: " + tempStudents.get(i));
+                
                 String[] students = tempStudents.toArray(new String[0]);
 
                 List<Path> emptySubmissionPaths =
