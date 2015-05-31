@@ -105,7 +105,8 @@ public class JavaCompileChecker implements CompileChecker {
         // First we build the command to invoke the compiler. This consists of
         // the compiler executable, the path of the
         // file to compile and compiler flags.
-
+    	
+    	LOGGER.info("Checkprogram Name: " + compilerName);
         List<String> compilerInvocation =
                 createCompilerInvocation(pathToSourceFolder, outputFolder,
                         compilerName, compilerFlags);

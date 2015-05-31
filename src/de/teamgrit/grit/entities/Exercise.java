@@ -180,6 +180,7 @@ public class Exercise {
         @Override
         public void run() {
             if (isDeadlinePassed()) {
+            	LOGGER.info("Deadline Passed");
                 postDeadlineProcessing();
             } else {
                 preDeadlineProcessing();
@@ -389,8 +390,8 @@ public class Exercise {
      * @return if the deadline is passed
      */
     private boolean isDeadlinePassed() {
-        return System.currentTimeMillis() >= context.getDeadline()
-                .getTimeInMillis();
+    	LOGGER.info("IsDeadLinePassed");
+    	return System.currentTimeMillis() >= context.getDeadline().getTimeInMillis();
     }
 
     /**
@@ -573,7 +574,7 @@ public class Exercise {
     private CompilerOutput compileSubmission(Submission submission)
             throws FileNotFoundException, BadCompilerSpecifiedException,
             BadFlagException, CompilerOutputFolderExistsException {
-
+        LOGGER.info("Compiliert den Codes von Student " + submission.getStudent().getName());
         CompileChecker compiler = context.getCompileChecker();
         Path binPath = context.getBinPath();
         String compilerName = context.getCompilerName();
