@@ -83,6 +83,7 @@ public class GeneralTokenizer implements Tokenizer {
 
         // list to log all students that have not submitted anything
         m_emptyLocations = new ArrayList<>();
+      
 
         // first make sure we have got stuff to check at all
         if ((location.toFile().listFiles() == null)
@@ -90,23 +91,45 @@ public class GeneralTokenizer implements Tokenizer {
             // then return nothing.
             return new LinkedList<>();
         }
-
+        
         List<Submission> foundSubmissions = new LinkedList<>();
 
         // We are now at TOPLEVEL, which is location
         // now we recursively traverse along the given structure
+        
+        // Test ob Struktur richtig übergeben wird an traverse
+        
+        List<String> t = submissionStructure.getStructure();
+        for (int i= 0; i < t.size(); i++)
+        	m_log.info(t.get(i));
+        // Test ob Pfad richtig übergeben wird an traverse
+        m_log.info(location.toString());
+        
         List<Path> allSubmissionPaths = traverse(
                 submissionStructure.getStructure(), location);
-
+        
+        if(allSubmissionPaths.size() == 0)
+        	m_log.info("kein Pfad über travers gefunden");
+        
+        // Aussgane der gefunden SubmissionPaths
+        for (int i= 0; i < allSubmissionPaths.size(); i++)
+        	m_log.info("SubmissonPaths:" + allSubmissionPaths.get(i).toString());
+        
+                  
         // For each file we found we add a submission object
+        
         int i = 0;
+        
         for (Path submissionFile : allSubmissionPaths) {
+        	m_log.info("SubmissionFile:" + submissionFile.toString());
             Submission submission = new Submission(submissionFile, new Student(
                     "Unknown" + i));
             foundSubmissions.add(submission);
             i++;
         }
-
+        
+        if(foundSubmissions.size() == 0)
+        	m_log.info("foundSubmission ist leer");
         return foundSubmissions;
     }
 
@@ -163,6 +186,8 @@ public class GeneralTokenizer implements Tokenizer {
         // If we have reached the bottom, we can scan for files.
         if ("SUBMISSION".equals(structure.get(level))) {
             // look for files.
+        	m_log.info("Bottom reached");
+        	m_log.info("location of Submission" + location.toString());
             m_log.config("Bottomed out in " + location);
             List<Path> submission = extractSubmissionFiles(location);
             // log students without a submission
@@ -187,18 +212,30 @@ public class GeneralTokenizer implements Tokenizer {
         for (File currentFile : location.toFile().listFiles()) {
             m_log.info("looking at " + currentFile.toString());
             if (currentFile.isDirectory()) {
+            	m_log.info("isDirectory " + currentFile.toString());
                 // does this directory match our structure spec?
+            	m_log.info("Match " + currentFile.getName());
+            	m_log.info("mit " + structure.get(level));
                 if (currentFile.getName().matches(structure.get(level))) {
-                    // if so, traverse it and collect everything it returns.
+                	// if so, traverse it and collect everything it returns.
+                	m_log.info("Match erfolgreich");
+                	m_log.info("file" + currentFile.toPath().toString());
                     foundSubmissions.addAll(traverse(structure, (level + 1),
                             currentFile.toPath()));
+                    
                 } else {
                     m_log.info("Unexpected file: " + currentFile.toString()
                             + " to " + structure.get(level));
                 }
             }
         }
-
+        //Ausgabe falls travers fehlschlägt
+        if(foundSubmissions.size() == 0)
+        	m_log.info("no Submissions found");
+        
+        //Ausgabe der gefundenen Submissions
+        for (int i= 0; i < foundSubmissions.size(); i++)
+        	m_log.info("Submissions found" + foundSubmissions.get(i).toString());
         return foundSubmissions;
     }
 
@@ -221,6 +258,7 @@ public class GeneralTokenizer implements Tokenizer {
 
             // unpack archives
             if (currentFile.toString().matches(m_archiveRegex)) {
+            	m_log.info("unpack archives: " + currentFile.toString());
                 try {
                     // the number indicates to which level of a zipfile nested
                     // zipfiles will be extracted
@@ -249,6 +287,8 @@ public class GeneralTokenizer implements Tokenizer {
                 m_log.info("found invalid file: " + currentFile.toString());
             }
         }
+        if(submissionFiles.size()==0)
+        	m_log.info("no Submissionfiles added");
         return submissionFiles;
     }
 }
