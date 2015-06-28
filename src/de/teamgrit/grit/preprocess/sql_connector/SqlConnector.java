@@ -85,10 +85,12 @@ public class SqlConnector {
 
             // connect to the database with the specified information
             DriverManager.setLoginTimeout(CONNECTIONTIMEOUTSECONDS);
-            m_sqlConnection =
+                            
+           m_sqlConnection =
                     DriverManager
                             .getConnection(m_database, m_user, m_password);
 
+           
             // creates object for executing queries on the connection
             m_sqlStatement = m_sqlConnection.createStatement();
 

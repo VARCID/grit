@@ -168,7 +168,7 @@ public class JavaCompileChecker implements CompileChecker {
                     new ProcessBuilder(compilerInvocation);
             // make sure the compiler stays in its directory.
             if (Files.isDirectory(pathToSourceFolder,
-                    LinkOption.NOFOLLOW_LINKS)) {
+                    LinkOption.NOFOLLOW_LINKS)) {	
                 compilerProcessBuilder.directory(pathToSourceFolder.toFile());
             } else {
                 compilerProcessBuilder.directory(pathToSourceFolder

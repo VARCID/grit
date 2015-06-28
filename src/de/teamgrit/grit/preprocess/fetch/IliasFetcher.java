@@ -129,10 +129,14 @@ public class IliasFetcher {
         // jdbc:mysql://[some url or IP to host]/ilias
         // jdbc:mysql:// is prepended to indicate a DB connection, ilias is the
         // table we'll read from
-        String dbConnectionString = "jdbc:mysql://" + iliasLocation + "/ilias";
-
+        
+       String dbConnectionString = "jdbc:mysql://" + iliasLocation + "/ilias";
+        
+               
+        
         SqlConnector sqlConnection = new SqlConnector(dbConnectionString,
                 sqlUsername, sqlPassword);
+        
         if (!sqlConnection.establishConnection()) {
             LOGGER.severe("Database connection could not be established with "
                     + "parameters: \"" + dbConnectionString + "\", \""
@@ -142,6 +146,8 @@ public class IliasFetcher {
         }
         String query = String.format(DATA_QUERY_TEMPLATE, courseName,
                 exerciseName);
+        LOGGER.info(courseName + " excer: " + exerciseName);
+        
         ResultSet submissionData = sqlConnection.getDataFromDB(query);
 
         if (submissionData == null) {

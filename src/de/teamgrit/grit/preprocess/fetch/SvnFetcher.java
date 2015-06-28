@@ -232,6 +232,8 @@ public final class SvnFetcher {
     private static Path updateDirectoryPath(String location, Path oldPath) {
         Path targetDirectory = Paths.get(oldPath.toAbsolutePath().toString());
         // check whether the svn repo is given via a url or is given via a path
+        LOGGER.info("Update SVN directory Path");
+        
         if (!location.startsWith("file://")) {
 
             // We need to get the name of the checked out folder / repo.
