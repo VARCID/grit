@@ -20,8 +20,11 @@ package de.teamgrit.grit.entities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Exception;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +35,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.mail.MessagingException;
 
 import org.apache.commons.io.FileUtils;
@@ -56,6 +62,7 @@ import de.teamgrit.grit.preprocess.fetch.SubmissionFetchingException;
 import de.teamgrit.grit.preprocess.tokenize.Submission;
 import de.teamgrit.grit.report.ReportGenerator;
 import de.teamgrit.grit.util.config.NoProperParameterException;
+import de.teamgrit.grit.util.mailer.EncryptorDecryptor;
 import de.teamgrit.grit.util.mailer.SendMailSSL;
 
 /**
@@ -443,6 +450,41 @@ public class Exercise {
     }
 
     /**
+     * getCompilerError returns the compiler errors, so that they can be send to the students
+     * in the method notifyStudentsWithCorruptedSubmission()
+     * @param sub
+     *          The submission of the student with compiler errors
+     * @return
+     *          Returns the compilerOutput as a String
+     */
+    private String getCompilerError(Submission sub) {
+        //The following code creates a string with the compilerError.
+        String compilerOutput = "Die Abgabe compiliert nicht." + "\n\n";
+        for (String error : sub.getCheckingResult().getCompilerOutput()
+                .getCompilerErrors()) {
+            compilerOutput += "Compiler Errors:" + "\n\n";
+            compilerOutput += error + "\n";
+            compilerOutput += "\n\n";
+        }
+
+        for (String warning : sub.getCheckingResult()
+                .getCompilerOutput().getCompilerWarnings()) {
+            compilerOutput += "Compiler Warnings:" + "\n\n";
+            compilerOutput += warning + "\n";
+            compilerOutput += "\n\n";
+        }
+
+        for (String info : sub.getCheckingResult().getCompilerOutput()
+                .getCompilerInfos()) {
+
+            compilerOutput += "Compiler Infos:" + "\n\n";
+            compilerOutput += info + "\n";
+            compilerOutput += "\n\n";
+        }
+        return compilerOutput;
+    }
+
+    /**
      * Checks if plausible flag or cleanCopile flag of submission is set or
      * not. Sends warning email to corresponding student if not. If set this
      * method does nothing.
@@ -481,12 +523,48 @@ public class Exercise {
                  * infos
                  */
 
+                //Logger shows that Submission(s) does not compile
+                LOGGER.severe("Submission(s) does not compile.");
+
+                //The following code will create the necessary variables to send an email.
+                String emailAdmin = Controller.getController().getConfig().getMailAdmin();
+                String receiverEmailAddress = sub.getStudent().getEmail();
+                String sendUserName =
+                        m_controller.getConnection(context.getConnectionId()).getUsername().toString();
+                String sendPassword =
+                        m_controller.getConnection(context.getConnectionId()).getPassword().toString();
+
+                //The following code creates the mailSubject and the mailText of the email
+                //which will be received by the student.
+                String mailSubject = new String("Ihre Abgabe für Exercise " + getName() + " kompiliert nicht.");
+                String mailText = new String("Hallo " + sub.getStudent().getName() + ",\n" +
+                                             "Ihre Abgabe kompiliert nicht.\n" +
+                                             "Probleme sind: \n" + getCompilerError(sub) + "\n\n" +
+                                             "Sie haben bis " + context.getDeadlineString() +
+                                             " Zeit, dies zu korrigieren.\n\n" +
+                                             "Mit freundlichen Grüßen\n\n" + "Grit.");
+
+                //The following code will send an email to the student(s) with submissions which does not compile.
+                //The catch statements are necessary because of the EncryptorDecryptor.
                 try {
-                    SendMailSSL.sendMail(GenerateMailObjectHelper
-                            .generateMailObjectDoesNotCompile(sub, context));
-                } catch (MessagingException e) {
-                    LOGGER.severe("Exception occured while trying to send "
-                            + "mails to students. " + e.getMessage());
+                    EncryptorDecryptor ed = new EncryptorDecryptor();
+                    SendMail sendMail = new SendMail();
+                    sendMail.setAccountDetails(sendUserName, ed.decrypt(sendPassword));
+                    sendMail.sendEMail(sendUserName, receiverEmailAddress, mailSubject, mailText);
+                } catch (IOException e) {
+                    LOGGER.severe("IOException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (IllegalBlockSizeException e) {
+                    LOGGER.severe("IllegalBlockSizeException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (InvalidKeyException e) {
+                    LOGGER.severe("InvalidKeyException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (BadPaddingException e) {
+                    LOGGER.severe("BadPaddingException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (NoSuchAlgorithmException e) {
+                    LOGGER.severe("NoSuchAlgorithmException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (NoSuchPaddingException e) {
+                    LOGGER.severe("NoSuchPaddingException during sending email because of Submissions which does not compile " + e.getMessage());
+                } catch (Exception e) {
+                    LOGGER.severe("Exception during sending email because of Submissions which does not compile " + e.getMessage());
                 }
             }
         }
@@ -526,12 +604,45 @@ public class Exercise {
      * the report is ready for download.
      */
     private void notifyAdmin() {
+        //The following code will create the necessary varialbes to send an email.
+        String adminName = Controller.getController().getConfig().getAdminName();
+        //emailAdmin is the receiverEmailAddress
+        String emailAdmin = Controller.getController().getConfig().getMailAdmin();
+        String sendUserName =
+                m_controller.getConnection(context.getConnectionId()).getUsername().toString();
+        String sendPassword =
+                m_controller.getConnection(context.getConnectionId()).getPassword().toString();
+
+        //The following code creates the mailSubject and the mailText of the email
+        //which will received by the admin.
+        String mailSubject = new String("Exercise " + getName() + " ist abgeschlossen.");
+        String mailText =
+                new String("Sehr geehrte(r) " + adminName + ",\n \n" +
+                        "Exercise " + getName() + " hat die Deadline " + context.getDeadlineString() + " erreicht.\n \n" +
+                        "Die Bewertungs-PDF steht zum Download bereit. \n \n" +
+                        "Diese E-Mail wurde automatisch von Grit erstellt.");
+
+        //The following code will send an email to the admin as a notification that the exercise has passed the deadline.
+        //The catch statements are necessary because of the EncryptorDecryptor.
         try {
-            SendMailSSL.sendMail(GenerateMailObjectHelper
-                    .generateMailObjectNotifyAdmin(context, id));
-        } catch (MessagingException e) {
-            LOGGER.severe("Exception occured while trying to send mails to "
-                    + "admin. " + e.getMessage());
+            EncryptorDecryptor ed = new EncryptorDecryptor();
+            SendMail sendMail = new SendMail();
+            sendMail.setAccountDetails(sendUserName, ed.decrypt(sendPassword));
+            sendMail.sendEMail(sendUserName, emailAdmin, mailSubject, mailText);
+        } catch (IOException e) {
+            LOGGER.severe("IOException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (IllegalBlockSizeException e) {
+            LOGGER.severe("IllegalBlockSizeException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (InvalidKeyException e) {
+            LOGGER.severe("InvalidKeyException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (BadPaddingException e) {
+            LOGGER.severe("BadPaddingException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.severe("NoSuchAlgorithmException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (NoSuchPaddingException e) {
+            LOGGER.severe("NoSuchPaddingException during sending email because of Submissions which does not compile " + e.getMessage());
+        } catch (Exception e) {
+            LOGGER.severe("Exception during sending email because of Submissions which does not compile " + e.getMessage());
         }
     }
 
