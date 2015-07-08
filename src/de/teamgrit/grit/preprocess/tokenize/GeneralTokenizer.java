@@ -86,12 +86,18 @@ public class GeneralTokenizer implements Tokenizer {
       
 
         // first make sure we have got stuff to check at all
-        if ((location.toFile().listFiles() == null)
-                || (location.toFile().listFiles().length == 0)) {
-            // then return nothing.
-            return new LinkedList<>();
-        }
+        // Mailfetcher sets location to null, if no submission was available, therefore it has to be taken care here.
+        try {
+        	if ((location.toFile().listFiles() == null)
+                    || (location.toFile().listFiles().length == 0) || location == null) {
+                // then return nothing.
+                return new LinkedList<>();
+            }
+		} catch (NullPointerException e) {
+			return new LinkedList<>();
+		}
         
+       
         List<Submission> foundSubmissions = new LinkedList<>();
 
         // We are now at TOPLEVEL, which is location
@@ -201,11 +207,16 @@ public class GeneralTokenizer implements Tokenizer {
         List<Path> foundSubmissions = new LinkedList<>();
 
         // ensure that empty dirs are handled properly
-        if ((location.toFile().listFiles() == null)
+        try {
+        	if ((location.toFile().listFiles() == null)
                 || (location.toFile().listFiles().length == 0)) {
             m_log.info("No files in " + location.toString());
             return new LinkedList<>();
-        }
+        } 	
+		} catch (NullPointerException e) {
+			return new LinkedList<>();
+		}
+        
 
         // If we are not too deep and not in the final level, go through all
         // directories here and go one level deeper.
