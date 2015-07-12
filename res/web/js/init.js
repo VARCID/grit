@@ -415,8 +415,9 @@ function exerciseEdit(courseId, exerciseId) {
  * @returns {undefined}
  */
 function exerciseDelete(courseId, exerciseId) {
-	alert("Warning:\n"
-			+ "The exercise will be deleted and will no longer be available!");
+	if (!confirm("Warning:\n"
+			+ "The exercise will be deleted and will no longer be available!"))
+		return;
 	$("#overlay-loading").css("display", "block");
 	$.getJSON('exercise/delete/' + courseId + '/' + exerciseId, function(
 			exercise) {
@@ -494,8 +495,9 @@ function courseEdit(courseId) {
  * @returns {undefined}
  */
 function courseDelete(courseId) {
-	alert("Warning:\n"
-			+ "The course including all its exercises will be deleted and will no longer be available!");
+	if (!confirm("Warning:\n"
+			+ "The course including all its exercises will be deleted and will no longer be available!"))
+		return;
 	$("#overlay-loading").css("display", "block");
 	$.getJSON('course/delete/' + courseId, function(
 			course) {
@@ -607,7 +609,7 @@ function connectionNew() {
 		$("#connection-new-connectionName").val("");
 
 		$("#connection-new-connectionType").empty();
-
+			
 		var typeCount = 0;
 		$.each(connectionTypes, function(i, type) {
 			$("#connection-new-connectionType").append('<option value="' + type + '">'
@@ -624,6 +626,25 @@ function connectionNew() {
 
 		$("#connection-new").css("display", "block");
 		$("#overlay-loading").css("display", "none");
+		$(".SVN").hide();
+		$("#connection-new-connectionType").change(function() {
+			  val = $(this).val();
+			  if (val == 'ILIAS') {
+				  $(".SVN").hide();
+				  $(".ILIAS").show();
+			  }
+			  if (val == 'SVN') {
+				  $(".SVN").show();
+				  $(".ILIAS").hide();  
+			  }  
+			  if (val == 'MAIL') {
+				  $(".ILIAS,.SVN").hide();
+			  }
+			 });
+		var checkilias = $("#connection-new-connectionType").val();
+		if (checkilias == 'ILIAS') {
+				$(".ILIAS").show();
+		}
 	});
 }
 
@@ -692,8 +713,9 @@ function connectionEdit(connectionId) {
  * @returns {undefined}
  */
 function connectionDelete(connectionId) {
-	alert("Warning:\n"
-			+ "The connection will be deleted and will no longer be available!");
+if (!confirm("Warning:\n"
+			+ "The connection will be deleted and will no longer be available!"))
+	return;
 	$("#overlay-loading").css("display", "block");
 	$.getJSON('connection/delete/' + connectionId, function(
 			connection) {

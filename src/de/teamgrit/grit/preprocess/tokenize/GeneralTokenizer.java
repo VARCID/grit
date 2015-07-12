@@ -103,39 +103,20 @@ public class GeneralTokenizer implements Tokenizer {
         // We are now at TOPLEVEL, which is location
         // now we recursively traverse along the given structure
         
-        // Test ob Struktur richtig übergeben wird an traverse
-        
-        List<String> t = submissionStructure.getStructure();
-        for (int i= 0; i < t.size(); i++)
-        	m_log.info(t.get(i));
-        // Test ob Pfad richtig übergeben wird an traverse
-        m_log.info(location.toString());
-        
         List<Path> allSubmissionPaths = traverse(
                 submissionStructure.getStructure(), location);
-        
-        if(allSubmissionPaths.size() == 0)
-        	m_log.info("kein Pfad über travers gefunden");
-        
-        // Aussgane der gefunden SubmissionPaths
-        for (int i= 0; i < allSubmissionPaths.size(); i++)
-        	m_log.info("SubmissonPaths:" + allSubmissionPaths.get(i).toString());
-        
-                  
+                         
         // For each file we found we add a submission object
         
         int i = 0;
         
         for (Path submissionFile : allSubmissionPaths) {
-        	m_log.info("SubmissionFile:" + submissionFile.toString());
-            Submission submission = new Submission(submissionFile, new Student(
+        	Submission submission = new Submission(submissionFile, new Student(
                     "Unknown" + i));
             foundSubmissions.add(submission);
             i++;
         }
         
-        if(foundSubmissions.size() == 0)
-        	m_log.info("foundSubmission ist leer");
         return foundSubmissions;
     }
 
