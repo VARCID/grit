@@ -1,0 +1,50 @@
+[Box: ::de.teamgrit.grit.webserver - ::<<Unknown>>::AbstractHandler]
+X=363
+Y=40
+
+[Box: ::de.teamgrit.grit.webserver - ::<<Unknown>>::Exception]
+X=794
+Y=40
+
+[Box: ::de.teamgrit.grit.webserver - ::<<Unknown>>::Server]
+X=20
+Y=40
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::BadRequestException]
+X=691
+Y=121
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::ConnectionHandler]
+X=48
+Y=515
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::CourseHandler]
+X=253
+Y=515
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::EntityHandler]
+X=225
+Y=121
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::ExerciseHandler]
+X=458
+Y=515
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::GritServer]
+X=20
+Y=121
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::InternalActionErrorException]
+X=896
+Y=121
+
+[Box: ::de.teamgrit.grit.webserver - ::de.teamgrit.grit.webserver::XmlHandler]
+X=486
+Y=121
+
+[Diagram: ::de.teamgrit.grit.webserver]
+OffsetX=0
+OffsetY=0
+Visibility=0
+ShowAssoc=1
+
