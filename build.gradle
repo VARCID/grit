@@ -6,7 +6,10 @@ apply plugin: 'idea'
 group = theGroup
 
 sourceCompatibility = theSourceCompatibility
-version = theVersion + getDate()
+version=theVersion
+if(theRelease){
+  version = theVersion + getDate()
+}
 
 mainClassName = 'de.teamgrit.grit.main.Boot'
 
@@ -70,9 +73,6 @@ dependencies {
 
 }
 
-// test {
-//     systemProperties 'property': 'value'
-// }
 
 // No need to install gradle
 task wrapper(type: Wrapper) {
