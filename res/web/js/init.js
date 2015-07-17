@@ -21,7 +21,7 @@ function initialize() {
 	// handling.
 	$.ajaxSetup({
 		error: function(xhr, status, error) {
-			message = xhr.responseText + "\n(" + error + ")";
+			message = "mal probieren";//xhr.responseText + "\n(" + error + ")";
 			alert(message);
 			$(".overlay").css("display", "none");
 		}
@@ -563,7 +563,7 @@ function connectionList() {
 				+ '</tr>');
 		$.each(connnections, function(i, connection) {
 			$("#connection-list table").append('<tr><td>' + connection.name + '</td>'
-					+ '<td>' + connection.connectionType + '</td>' + '<td>'
+					+ '<td class = "asdf">' + connection.connectionType + '</td>' + '<td>'
 					+ connection.location + '</td>' + '<td>' + connection.username + '</td>'
 					+ '<td>' + connection.sshUsername + '</td>' + '<td>'
 					+ '<a class="icon-button edit" id="connection-' + connection.id
@@ -586,6 +586,7 @@ function connectionList() {
 		$("#connection-list").css("display", "block");
 		$("#overlay-loading").css("display", "none");
 	});
+	
 }
 
 /**
@@ -596,7 +597,7 @@ function connectionList() {
 function connectionNew() {
 	$("#overlay-loading").css("display", "block");
 	$.getJSON('connection/types', function(connectionTypes) {
-
+		var connectionTypess = ["SVN","MAIL"]
 		backAction = function() {
 			connectionList();
 		};
@@ -611,7 +612,7 @@ function connectionNew() {
 		$("#connection-new-connectionType").empty();
 			
 		var typeCount = 0;
-		$.each(connectionTypes, function(i, type) {
+		$.each(connectionTypess, function(i, type) {
 			$("#connection-new-connectionType").append('<option value="' + type + '">'
 					+ type + '</option>');
 			typeCount++;
@@ -626,7 +627,7 @@ function connectionNew() {
 
 		$("#connection-new").css("display", "block");
 		$("#overlay-loading").css("display", "none");
-		$(".SVN").hide();
+		//$("ILIAS").hide();
 		$("#connection-new-connectionType").change(function() {
 			  val = $(this).val();
 			  if (val == 'ILIAS') {
@@ -641,9 +642,10 @@ function connectionNew() {
 				  $(".ILIAS,.SVN").hide();
 			  }
 			 });
-		var checkilias = $("#connection-new-connectionType").val();
-		if (checkilias == 'ILIAS') {
-				$(".ILIAS").show();
+		var checkSVN = $("#connection-new-connectionType").val();
+		if (checkSVN == 'SVN') {
+				$(".SVN").show();
+				$(".ILIAS").hide();
 		}
 	});
 }
@@ -657,7 +659,8 @@ function connectionEdit(connectionId) {
 	$("#overlay-loading").css("display", "block");
 	$.getJSON('connection/types', function(connectionTypes) {
 		$.getJSON('connection/read/' + connectionId, function(connection) {
-
+			var connectionTypess = ["SVN","MAIL"]
+			var checkTypeArray = ["MAIL","SVN"]
 			backAction = function() {
 				connectionList();
 			};
@@ -670,14 +673,24 @@ function connectionEdit(connectionId) {
 			$("#connection-edit-connectionName").val(connection.name);
 
 			$("#connection-edit-connectionType").empty();
-
+			if (checkType == "MAIL"){
+				var typeCount = 0;
+				$.each(checkTypeArray, function(i, type) {
+					$("#connection-edit-connectionType").append('<option value="' + type
+						+ '">'
+						+ type + '</option>');
+				typeCount++;
+				});
+				$('.SVN').hide();
+			}else {
 			var typeCount = 0;
-			$.each(connectionTypes, function(i, type) {
+			$.each(connectionTypess, function(i, type) {
 				$("#connection-edit-connectionType").append('<option value="' + type
 						+ '">'
 						+ type + '</option>');
 				typeCount++;
-			});
+				});
+			}
 
 			$("#connection-edit-location").val(connection.location);
 			$("#connection-edit-username").val(connection.username);
@@ -702,9 +715,46 @@ function connectionEdit(connectionId) {
 
 			$("#connection-edit").css("display", "block");
 			$("#overlay-loading").css("display", "none");
+			
 		});
+		
 	});
+
+	$('.ILIAS').hide();
+	$("#connection-edit-connectionType").change(function() {
+		  val = $(this).val();
+		  //if (val == 'ILIAS') {
+			 // $(".SVN").hide();
+			  //$(".ILIAS").show();
+		  //}
+		  if (val == 'SVN') {
+			  $(".SVN").show();
+			  //$(".ILIAS").hide();  
+		  }  
+		  if (val == 'MAIL') {
+			  $(".SVN").hide();
+		  }
+		 });
+	var checkILIAS = $("#connection-edit-connectionType").val();
+	if (checkILIAS == 'ILIAS') {
+			$(".ILIAS").show();
+	}
+	var checkSVN = $("#connection-edit-connectionType").val();
+	if (checkSVN == 'SVN') {
+			$(".SVN").show();
+	}
+
+	//var checkMAIL = $("#connection-edit-connectionType").val();
+	//if (checkMAIL == 'MAIL') {
+		//	$(".MAIL").show();
+	//}
+	//checkType = $('.asdf').val();
+	$('#connection-list tr').each(function() {
+	     checkType = $(this).find(".asdf").html();    
+	 });
 }
+
+//<option value="1">India</option>  
 
 /**
  * This is the view function for the connection delete action.
@@ -753,6 +803,10 @@ function xml() {
 		$("#content-body > div").css("display", "none");
 		$("#xml").css("display", "block");
 		$("#overlay-loading").css("display", "none");
+	});
+	$(".sinnvolleAusgabe").click(function(){
+	     alert("Hier sollte dann was sinnvolles kommen oder??")
+	     return;
 	});
 }
 

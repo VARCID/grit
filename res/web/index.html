@@ -179,7 +179,7 @@
 							<table>
 								<tr>
 									<th>connection name</th>
-									<th>type</th>
+									<th class = "rightConnectionType">type</th>
 									<th>location</th>
 									<th>username</th>
 									<th>SSH username</th>
@@ -254,15 +254,15 @@
 										<td>password:</td>
 										<td><input type="password" class="input-field" id="connection-edit-password" name="password"></td>
 									</tr>
-									<tr>
+									<tr class = "ILIAS">
 										<td>ssh username:</td>
 										<td><input type="text" class="input-field" id="connection-edit-sshUsername" name="sshUsername"></td>
 									</tr>
-									<tr>
+									<tr class = "ILIAS">
 										<td>ssh key-file:</td>
 										<td><input type="file" id="connection-edit-sshKeyFile" name="sshKeyFile"></td>
 									</tr>
-									<tr>
+									<tr class = "SVN">
 										<td>structure:</td>
 										<td><textarea class="input-field" id="connection-edit-structure" name="structure"></textarea></td>
 									</tr>
@@ -287,7 +287,7 @@
 									<tr>
 									</tr>
 								</table>
-								<input class="knopf" type="submit" value="Update config">
+								<input class="knopf sinnvolleAusgabe" type="submit" value="Update config">
 							</form>
 						</div> <!-- END xml-config -->
 
