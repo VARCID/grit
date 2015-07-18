@@ -818,7 +818,12 @@ public class Exercise {
             } catch (ClassNotFoundException | IOException e) {
                 LOGGER.severe("Exception while testing Submisson. "
                         + e.getMessage());
+            } catch (NullPointerException n) {
+            	// if tester is not properly selected during exercise, then it is null by default. Thats why it is cached here.
+            	List<Result> results = new ArrayList<>();
+            	return new TestOutput(results, true);
             }
+            
         } else if (!compileResult.isCleanCompile()) {
             List<Result> results = new ArrayList<>();
             return new TestOutput(results, false);
