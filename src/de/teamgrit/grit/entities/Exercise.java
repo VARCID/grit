@@ -615,7 +615,6 @@ public class Exercise {
 
                 //The following code will create the necessary variables to send an email.
                 String receiverEmailAddress = sub.getStudent().getEmail();
-                System.out.println("empfänger: " + receiverEmailAddress);
                 String sendUserName =
                         //m_controller.getConnection(context.getConnectionId()).getUsername().toString();
                 		Controller.getController().getConfig().getSenderMailAdress();
@@ -669,7 +668,6 @@ public class Exercise {
             	
             	//The following code will create the necessary variables to send an email.
                 String receiverEmailAddress = student.getEmail();
-                System.out.println("empfänger: " + receiverEmailAddress);
                 String sendUserName =
                         //m_controller.getConnection(context.getConnectionId()).getUsername().toString();
                 		Controller.getController().getConfig().getSenderMailAdress();
@@ -723,11 +721,9 @@ public class Exercise {
         String sendUserName =
                 //m_controller.getConnection(context.getConnectionId()).getUsername().toString();
         		Controller.getController().getConfig().getSenderMailAdress();
-        System.out.println("sendUserName: " + sendUserName); 
         String sendPassword =
                 //m_controller.getConnection(context.getConnectionId()).getPassword().toString();
         		Controller.getController().getConfig().getMailPassword();
-        System.out.println("sendPassword: " + sendPassword);
         		
         //The following code creates the mailSubject and the mailText of the email
         //which will received by the admin.
