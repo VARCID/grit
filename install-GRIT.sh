@@ -4,6 +4,9 @@
 # changed by Verena Berg on 2015-06-29
 # changed by Verena Berg on 2015-07-04
 # changed by Verena Berg on 2015-07-07
+# changed by Verena Berg on 2015-07-13
+# changed by Verena Berg on 2015-07-14
+# changed by Verena Berg on 2015-07-16
 
 # This is an installation script for GRIT.
 # This script uses sudo and apt-get.
@@ -19,7 +22,7 @@ sudo apt-get update
 
 #In the folloing the -y option is used that you do not have to say 'yes' when the installations ask you if they should continue.
 
-#You will need the javac Compiler. The javac Compiler comes with the openjdk-8-jdk package
+#You will need the javac Compiler. The javac Compiler comes with the openjdk-7-jdk package
 
 sudo apt-get -y install openjdk-7-jdk
 
@@ -69,8 +72,32 @@ sudo apt-get -y install gradle
 
 if [ -d grit ]
 	then
-	  cd grit
+	  cd grit/build/install/GRIT/res/web
+
+	  #copy course- and exercise-files temporarily that they won't get lost.
+	  cp -R pdf /home/$USER
+
+	  #move to grit where the file gradle is.
+	  cd ..
+	  cd ..
+	  cd ..
+	  cd ..
+	  cd ..
+
+	  #change sourcecode, etc., to actual version.
 	  git pull
+
+	  #use gradlew to install actual version.
+	  ./gradlew install
+
+	  cd /home/$USER
+
+	  #copy course- and exercise-files back to where they belong.
+	  cp -R pdf grit/build/install/GRIT/res/web
+#
+	  #delete the temporarily created directory
+	  rm -r pdf
+
 else
 
 	#git clone https://github.com/VARCID/grit.git
@@ -80,8 +107,10 @@ else
 	#now there should be a directory called grit. Move there to install GRIT.
 
 	cd grit
+	#use gradlew to install GRIT on your computer.
+
+	./gradlew install
+
 fi
 
-#use gradlew to install GRIT on your computer.
 
-./gradlew install
