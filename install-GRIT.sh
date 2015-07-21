@@ -102,7 +102,7 @@ else
 
 	#git clone https://github.com/VARCID/grit.git
 
-	git clone https://github.com/VARCID/grit.git --branch development 
+	git clone https://github.com/VARCID/grit.git --branch master
 
 	#now there should be a directory called grit. Move there to install GRIT.
 
