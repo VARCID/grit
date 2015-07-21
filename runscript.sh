@@ -1,11 +1,20 @@
 #!/bin/bash
 
 chmod +x bin/GRIT
+#delete old output from older sessions
 if [ -e ./log/grit.out ]
  then
   rm -f ./log/grit.out
   echo "old grit.old deleted"
 fi
+
+#log directory doesn't exist if grit was never run
+if [ ! -e ./log ] || [ ! -d ./log ]
+ then
+  mkdir ./log
+fi
+
+#if grit.pid exist grit may already be running
 if [ -e grit.pid ]
  then
   echo "Grit maybe already running, please execute shutdownGrit.sh first."
