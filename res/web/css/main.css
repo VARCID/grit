@@ -320,18 +320,14 @@ html, body {
 	margin-bottom: 30px;
 }
 
-/**
- * Demo styles
- * Not needed for tooltips to work
- */
 
+/* Dieses Tooltip-Design wurde von Chris Bracco entwickelt, weshalb sämtlicher Credit an ihn geht.(source: http://cbracco.me/a-simple-css-tooltip/ )
+   Ich musste den Code nur ein bisschen anpassen, da sonst einige Fehler im Zusammenhang mit dem Grit UI aufgetreten sind(Verschiebung der Tolltip-Boxen und Grit UI Elementen,
+   Fehlerhafte Darstellung des Tooltips,...). */'
 
 a:hover {
   text-decoration: none;
 }
-/**
- * Tooltip Styles
- */
 
 /* Base styles for the element that has a tooltip */
 [data-tooltip],
